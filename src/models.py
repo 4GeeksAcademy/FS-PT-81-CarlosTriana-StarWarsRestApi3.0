@@ -10,6 +10,7 @@ class Users(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    peoples = db.relationship('Peoples', backref='user', lazy=True)
 
     def __repr__(self):
         return '<User %r>' % self.email
@@ -30,6 +31,8 @@ class Favorites(db.Model):
     people = db.Column(db.String(30), nullable=True)
     gender = db.Column(db.String(10), nullable=True)
     planet = db.Column(db.String(30), nullable=True)
+    people = db.relationship('Peoples', backref='favorites', lazy=True)
+    planet = db.relationship('Planets', backref='favorites', lazy=True)
 
     def serialize(self):
         return {
@@ -52,9 +55,8 @@ class Peoples(db.Model):
     height = db.Column(db.Float, nullable=True)
     mass = db.Column(db.Float, nullable=True)
     skin_color = db.Column(db.String(20), nullable=True)
-    #planets = db.relationship('Planets', backref='peoples')
-    #favorites = db.relationship('Favorites', backref='peoples')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    favorites = db.relationship('Favorites', backref='people', lazy=True)
 
     def __repr__(self):
          return '<Peoples %r>' % self.people
@@ -86,8 +88,7 @@ class Planets(db.Model):
     climate = db.Column(db.String(20), nullable=True)
     terrain = db.Column(db.String(20), nullable=True)
     surface_water = db.Column(db.Float, nullable=True)
-    #people_id = db.Column(db.Integer, db.ForeignKey('peoples.id'), nullable=True)
-    #favorites = db.relationship('Favorites', backref='planets')
+    favorites = db.relationship('Favorites', backref='planet', lazy=True)
 
     def __repr__(self):
          return '<Planets %r>' % self.planet
